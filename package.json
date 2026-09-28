@@ -1,0 +1,29 @@
+{
+  "name": "vp1",
+  "version": "1.0.0",
+  "description": "Veebiprogrammeerimise tundides tehtud veeb",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://pidginpid@github.com/pidginpid/vp1.git"
+  },
+  "keywords": [
+    "Tallinna",
+    "Ülikool",
+    "DTI",
+    "üliõpilane",
+    "tunnitöö"
+  ],
+  "author": "Karl Jakob Proso",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pidginpid/vp1/issues"
+  },
+  "homepage": "https://github.com/pidginpid/vp1#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
