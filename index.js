@@ -12,6 +12,8 @@ const app = express();
 app.set('view engine', 'ejs');
 // määran ühe päris kataloogi virtuaalses serveris kättesaadavaks
 app.use(express.static('public'));
+// parsime vormiandmed, et req.body oleks kättesaadav (false, kuna vormis on ainult tekst)
+app.use(bodyparser.urlencoded({extended: false}));
 
 // marsruudid
 app.get('/', (req, res)=>{
@@ -45,10 +47,26 @@ app.get('/regvisit', (req, res)=>{
 app.post('/regvisit', async (req, res)=>{
 	try {
 		await fs.open(regTextRef, 'a');
-		await fs.appendFile(regTextRef, reg.body.nameInput + ';');
+		// külastuse kuupäev ja kellaaeg dateFindET.js moodulist
+		const visitDate = dateET.fullDate();
+		const visitTime = dateET.fullTime();
+		await fs.appendFile(regTextRef, req.body.nameInput + ', ' + visitDate + ', ' + visitTime + ';');
 		res.render('regvisit');
 	} catch (err){
 		console.log(err);
+	}
+});
+
+app.get('/lastvisit', async (req, res)=>{
+	try {
+		const rawText = await fs.readFile(regTextRef, 'utf8');
+		let visitList = rawText.split(';');
+		// viimane element on tühi (lõpus olev semikoolon), seega viimane külastus on eelviimane
+		let lastVisitParts = visitList[visitList.length - 2].split(',');
+		// osad: [0] nimi, [1] kuupäev, [2] kellaaeg
+		res.render('lastvisit', {lastVisit: 'Viimati registreeriti külastus ' + lastVisitParts[1].trim() + ', kell ' + lastVisitParts[2].trim() + ' kui seda tegi ' + lastVisitParts[0].trim()});
+	} catch(err) {
+		res.render('lastvisit', {lastVisit: 'Ei leidnud ühtegi külastust!'});
 	}
 });
 
