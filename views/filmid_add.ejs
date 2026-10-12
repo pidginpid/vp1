@@ -15,22 +15,22 @@
 	<hr>
 	<form method="POST">
 		<label for="titleInput">Filmi pealkiri</label>
-		<input id="filmiInput" name="filmiInput" type="text" placeholder="Pealkiri ..." value="<%= title %>"
+		<input id="titleInput" name="titleInput" type="text" placeholder="Pealkiri ..." value="<%= title %>"
 		required>
 		<span><%= titleNotice %></span>
 		<br>
 		<label for="releaseInput">Filmi väljastamise aasta</label>
-		<input id="releaseInput" name="releaseInput" type="date" value="<%= release %>"
+		<input id="releaseInput" name="releaseInput" type="number" value="<%= release %>"
 		required>
 		<span><%= releaseNotice %></span>
 		<br>
 		<label for="durationInput">Filmi kestvus</label>
-		<input id="durationInput" name="durationInput" type="date" value="<%= duration %>">
+		<input id="durationInput" name="durationInput" type="number" value="<%= duration %>"
+		required>
 		<span><%= durationNotice %></span>
 		<br>
 		<label for="descriptionInput">Filmi kirjeldus</label>
-		<input id="descriptionInput" name="descriptionInput" type="text" placeholder="Kirjeldus ..." value="<%= description %>"
-		required>
+		<input id="descriptionInput" name="descriptionInput" type="text" placeholder="Kirjeldus ..." value="<%= description %>">
 		<span><%= descriptionNotice %></span>
 		<br>
 		<input id="personSubmit" name="personSubmit" type="submit" value="Salvesta">

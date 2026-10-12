@@ -234,14 +234,6 @@ app.get('/lastvisit', async (req, res)=>{
 
 //Eesti filmi marsruudid
 const eestifilmRouter = require('./routes/eestifilmRoutes')
-app.use('eestifilm', eestifilmRouter);
-
-app.get('/eestifilm/filmid_add', (req, res)=>{
-	res.render('filmid_add', {notice: 'Ootan sisestust!'});
-});
-
-app.get('/eestifilm/ametid_add', (req, res)=>{
-	res.render('ametid_add', {notice: 'Ootan sisestust!'});
-});
+app.use('/eestifilm', eestifilmRouter);
 
 app.listen(5117);
