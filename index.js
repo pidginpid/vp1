@@ -82,11 +82,11 @@ app.get('/lastvisit', async (req, res)=>{
 	}
 });
 
-app.get('/eestifilm', (req,res)=>{
+/* app.get('/eestifilm', (req,res)=>{
 	res.render('eestifilm');
-});
+}); */
 
-app.get('/eestifilm/inimesed', async (req,res)=>{
+/* app.get('/eestifilm/inimesed', async (req,res)=>{
 	console.log('Andmebaasiserver on: ' + process.env.DB_HOST);
 	let conn;
 	try {
@@ -109,9 +109,9 @@ app.get('/eestifilm/inimesed', async (req,res)=>{
 			await conn.end();
 		}
 	}
-});
+}); */
 
-app.get('/eestifilm/inimesed_add', (req, res)=>{
+/* app.get('/eestifilm/inimesed_add', (req, res)=>{
 	res.render('inimesed_add', {
 		notice: 'Ootan sisestust!',
 		firstName: null,
@@ -123,9 +123,9 @@ app.get('/eestifilm/inimesed_add', (req, res)=>{
 		bornNotice: null,
 		deceasedNotice: null
 	});
-});
+}); */
 
-app.post('/eestifilm/inimesed_add', async (req, res)=>{
+/* app.post('/eestifilm/inimesed_add', async (req, res)=>{
 	console.log(req.body);
 	// kontrollime andmete olemasolu
 	const now = new Date();
@@ -230,7 +230,11 @@ app.post('/eestifilm/inimesed_add', async (req, res)=>{
 			await conn.end();
 		}
 	}
-});
+}); */
+
+//Eesti filmi marsruudid
+const eestifilmRouter = require('./routes/eestifilmRoutes')
+app.use('eestifilm', eestifilmRouter);
 
 app.get('/eestifilm/filmid_add', (req, res)=>{
 	res.render('filmid_add', {notice: 'Ootan sisestust!'});

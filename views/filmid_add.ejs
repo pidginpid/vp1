@@ -5,7 +5,7 @@
 </head>
 <body>
 	<img src="pic/veebiprogrammeerimine_2026_TA.png" alt ="banner">	<h1>Karl Jakob Proso, veebiprogrammeerimine</h1>
-	<h1>Filmide lisamine</h1>
+	<h1>Eesti filmide lisamine</h1>
 	<p>Siin lehel saab andmebaasi lisada Eesti filme.</p>
 	<hr>
 	<ul>
@@ -14,7 +14,26 @@
 	</ul>
 	<hr>
 	<form method="POST">
-
+		<label for="titleInput">Filmi pealkiri</label>
+		<input id="filmiInput" name="filmiInput" type="text" placeholder="Pealkiri ..." value="<%= title %>"
+		required>
+		<span><%= titleNotice %></span>
+		<br>
+		<label for="releaseInput">Filmi väljastamise aasta</label>
+		<input id="releaseInput" name="releaseInput" type="date" value="<%= release %>"
+		required>
+		<span><%= releaseNotice %></span>
+		<br>
+		<label for="durationInput">Filmi kestvus</label>
+		<input id="durationInput" name="durationInput" type="date" value="<%= duration %>">
+		<span><%= durationNotice %></span>
+		<br>
+		<label for="descriptionInput">Filmi kirjeldus</label>
+		<input id="descriptionInput" name="descriptionInput" type="text" placeholder="Kirjeldus ..." value="<%= description %>"
+		required>
+		<span><%= descriptionNotice %></span>
+		<br>
+		<input id="personSubmit" name="personSubmit" type="submit" value="Salvesta">
 	</form>
 	<p><%= notice %></p>
 </body>
