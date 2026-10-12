@@ -28,13 +28,36 @@ app.use(bodyparser.urlencoded({extended: false}));
 }); */
 
 // marsruudid
-app.get('/', (req, res)=>{
+app.get('/', async (req, res)=>{
 	//res.send('Express.js läks käima ja serveerib meile veebi.');
-	const dayNow = dateET.currentDay();
-	const dateNow = dateET.fullDate();
-	const timeNow = dateET.fullTime();
-	res.render('index', {dayNow: dayNow, dateNow: dateNow, timeNow: timeNow});
+	try {
+		const dayNow = dateET.currentDay();
+		const dateNow = dateET.fullDate();
+		const timeNow = dateET.fullTime();
+		const rawText = await fs.readFile(regTextRef, 'utf8');
+		let visitList = rawText.split(';');
+		// viimane element on tühi (lõpus olev semikoolon), seega viimane külastus on eelviimane
+		let lastVisitParts = visitList[visitList.length - 2].split(',');
+		// osad: [0] nimi, [1] kuupäev, [2] kellaaeg
+		res.render('index', {lastVisit: 'Viimati registreeriti külastus ' + lastVisitParts[1].trim() + ', kell ' + lastVisitParts[2].trim() + ' kui seda tegi ' + lastVisitParts[0].trim(), dayNow: dayNow, dateNow: dateNow, timeNow: timeNow});
+		//res.render('index', {dayNow: dayNow, dateNow: dateNow, timeNow: timeNow});
+	} catch(err) {
+		res.render('index', {lastVisit: 'Ei leidnud ühtegi külastust!'})
+	}
 });
+
+/* app.get('/lastvisit', async (req, res)=>{
+	try {
+		const rawText = await fs.readFile(regTextRef, 'utf8');
+		let visitList = rawText.split(';');
+		// viimane element on tühi (lõpus olev semikoolon), seega viimane külastus on eelviimane
+		let lastVisitParts = visitList[visitList.length - 2].split(',');
+		// osad: [0] nimi, [1] kuupäev, [2] kellaaeg
+		res.render('lastvisit', {lastVisit: 'Viimati registreeriti külastus ' + lastVisitParts[1].trim() + ', kell ' + lastVisitParts[2].trim() + ' kui seda tegi ' + lastVisitParts[0].trim()});
+	} catch(err) {
+		res.render('lastvisit', {lastVisit: 'Ei leidnud ühtegi külastust!'});
+	}
+}); */
 
 app.get('/kass', (req, res)=>{
 	res.render('kass');
@@ -235,5 +258,9 @@ app.get('/lastvisit', async (req, res)=>{
 //Eesti filmi marsruudid
 const eestifilmRouter = require('./routes/eestifilmRoutes')
 app.use('/eestifilm', eestifilmRouter);
+
+//Külastuse registreerimise marsruut
+const kulastuseRoute = require('./routes/kulastuseRoute')
+app.use('/regvisit', kulastuseRoute);
 
 app.listen(5117);
