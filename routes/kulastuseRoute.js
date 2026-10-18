@@ -4,7 +4,7 @@ const router = express.Router();
 //kontrollerid
 const {
 	regVisit, 
-	regVisitPost } = require('../controllers/kulastuseControllers');
+	regVisitPost } = require('../controllers/kulastuseController');
 
 router.route('/').get(regVisit);
 

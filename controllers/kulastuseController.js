@@ -1,4 +1,5 @@
 const fs = require('fs').promises;
+const dateET = require('../src/dateFindET');
 const regTextRef = 'public/txt/visits.txt';
 
 //@desc page for adding latest visited person 
@@ -7,7 +8,7 @@ const regTextRef = 'public/txt/visits.txt';
 
 const regVisit = (req, res) => {
 	res.render('regvisit');
-});
+};
 
 //@desc page for adding latest visited person 
 //@route POST /regvisit 
@@ -24,7 +25,7 @@ const regVisitPost = async (req, res) => {
 	} catch (err){
 		console.log(err);
 	}
-});
+};
 
 module.exports = {
 	regVisit,

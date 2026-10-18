@@ -10,7 +10,9 @@ const {
 	filmidAdd,
 	filmidAddPost,
 	ametidAdd,
-	ametidAddPost } = require('../controllers/eestifilmControllers');
+	ametidAddPost,
+	filmiseosed,
+	filmiseosedPost } = require('../controllers/eestifilmControllers');
 
 router.route('/').get(eestifilm);
 
@@ -27,5 +29,9 @@ router.route('/filmid_add').post(filmidAddPost);
 router.route('/ametid_add').get(ametidAdd);
 
 router.route('/ametid_add').post(ametidAddPost);
+
+router.route('/filmiseosed_add').get(filmiseosed);
+
+router.route('/filmiseosed_add').post(filmiseosedPost);
 
 module.exports = router;

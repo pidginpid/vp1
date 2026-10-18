@@ -397,6 +397,56 @@ const ametidAddPost = async (req, res) => {
 	}
 };
 
+//@desc page for adding connections between different tables for Estonian films, professions and people. 
+//@route GET /eestifilm/filmiseosed_add 
+//@access public
+
+const filmiseosed = (req, res) => {
+	res.render('filmiseosed_add');
+};
+
+const filmiseosedPost = async (req, res) => {
+	console.log(req.body);
+	// ühendus andmebaasiga
+	let conn;
+	try {
+		conn = await mysql.createConnection({
+			host: process.env.DB_HOST,
+			user: process.env.DB_USER,
+			password: process.env.DB_PASS,
+			database: process.env.DB_NAME
+		});
+		// If statement, kui valitakse person_in_movie
+		let sqlReq = 'INSERT INTO profession (title, description) VALUES (?, ?)';
+		await conn.execute(sqlReq, [
+			req.body.titleInput,
+			descriptionValue
+		]);
+		res.render('ametid_add', {
+			notice: 'Andmed salvestatud!',
+			title: null,
+			description: null,
+			titleNotice: null,
+			descriptionNotice: null
+		});
+
+	} catch (err) {
+		console.log('Viga andmebaasiga suhtlemisel: ' + err);
+		res.render('ametid_add', {
+			notice: 'Tekkis viga, andmeid ei salvestatud!',
+			title: req.body.titleInput,
+			description: req.body.descriptionInput,
+			titleNotice: null,
+			descriptionNotice: null
+		});
+	}
+	finally {
+		if(conn){
+			await conn.end();
+		}
+	}
+};
+
 module.exports = {
 	eestifilm,
 	inimesed,
@@ -405,5 +455,7 @@ module.exports = {
 	filmidAdd,
 	filmidAddPost,
 	ametidAdd,
-	ametidAddPost
+	ametidAddPost,
+	filmiseosed,
+	filmiseosedPost
 }
