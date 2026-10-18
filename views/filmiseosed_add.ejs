@@ -1,3 +1,4 @@
+<% const isSel = function(chosen, optionId){ return chosen !== null && chosen !== undefined && String(chosen) === String(optionId); }; %>
 <html lang="et">
 <head>
 	<meta charset="utf-8">
@@ -13,10 +14,149 @@
 		<li><a href="/eestifilm">Eesti filmi avaleht</a></li>
 	</ul>
 	<hr>
-	<select id="" name="">
-		<option selected disabled>Vali ...</option>
-		<option value="">üks valik</option>
-	</select>
+	<form method="POST">
+		<label for="relationInput">Seose tüüp</label>
+		<select id="relationInput" name="relationInput">
+			<option value="" <%= relation ? '' : 'selected' %> disabled>Vali ...</option>
+			<option value="person_in_movie" <%= relation === 'person_in_movie' ? 'selected' : '' %>>Isik filmis</option>
+			<option value="movie_genre" <%= relation === 'movie_genre' ? 'selected' : '' %>>Filmi žanr</option>
+			<option value="movie_production_company" <%= relation === 'movie_production_company' ? 'selected' : '' %>>Filmi tootmisettevõte</option>
+			<option value="quote" <%= relation === 'quote' ? 'selected' : '' %>>Tsitaat</option>
+		</select>
+		<span><%= relationNotice %></span>
+		<br>
+
+		<div id="person_in_movie_fields" style="display: none;">
+			<label for="personInput">Isik</label>
+			<select id="personInput" name="personInput" disabled>
+				<option <%= personId ? '' : 'selected' %> disabled>Vali ...</option>
+				<% personList.forEach(function(person){ %>
+				<option value="<%= person.id %>" <%= isSel(personId, person.id) ? 'selected' : '' %>><%= person.first_name %> <%= person.last_name %></option>
+				<% }); %>
+			</select>
+			<span><%= personNotice %></span>
+			<br>
+			<label for="movieInput">Film</label>
+			<select id="movieInput" name="movieInput" disabled>
+				<option <%= movieId ? '' : 'selected' %> disabled>Vali ...</option>
+				<% movieList.forEach(function(movie){ %>
+				<option value="<%= movie.id %>" <%= isSel(movieId, movie.id) ? 'selected' : '' %>><%= movie.title %></option>
+				<% }); %>
+			</select>
+			<span><%= movieNotice %></span>
+			<br>
+			<label for="professionInput">Amet</label>
+			<select id="professionInput" name="professionInput" disabled>
+				<option <%= professionId ? '' : 'selected' %> disabled>Vali ...</option>
+				<% professionList.forEach(function(profession){ %>
+				<option value="<%= profession.id %>" <%= isSel(professionId, profession.id) ? 'selected' : '' %>><%= profession.title %></option>
+				<% }); %>
+			</select>
+			<span><%= professionNotice %></span>
+			<br>
+			<div id="characterBlock" style="display: none;">
+				<label for="characterInput">Tegelaskuju nimi</label>
+				<input id="characterInput" name="characterInput" type="text" placeholder="Tegelaskuju nimi ..." value="<%= characterName %>" disabled>
+				<span><%= characterNotice %></span>
+				<br>
+			</div>
+		</div>
+
+		<div id="movie_genre_fields" style="display: none;">
+			<label for="genreMovieInput">Film</label>
+			<select id="genreMovieInput" name="genreMovieInput" disabled>
+				<option <%= genreMovieId ? '' : 'selected' %> disabled>Vali ...</option>
+				<% movieList.forEach(function(movie){ %>
+				<option value="<%= movie.id %>" <%= isSel(genreMovieId, movie.id) ? 'selected' : '' %>><%= movie.title %></option>
+				<% }); %>
+			</select>
+			<span><%= genreMovieNotice %></span>
+			<br>
+			<label for="genreInput">Žanr</label>
+			<select id="genreInput" name="genreInput" disabled>
+				<option <%= genreId ? '' : 'selected' %> disabled>Vali ...</option>
+				<% genreList.forEach(function(genre){ %>
+				<option value="<%= genre.id %>" <%= isSel(genreId, genre.id) ? 'selected' : '' %>><%= genre.name %></option>
+				<% }); %>
+			</select>
+			<span><%= genreNotice %></span>
+			<br>
+		</div>
+
+		<div id="movie_production_company_fields" style="display: none;">
+			<label for="companyMovieInput">Film</label>
+			<select id="companyMovieInput" name="companyMovieInput" disabled>
+				<option <%= companyMovieId ? '' : 'selected' %> disabled>Vali ...</option>
+				<% movieList.forEach(function(movie){ %>
+				<option value="<%= movie.id %>" <%= isSel(companyMovieId, movie.id) ? 'selected' : '' %>><%= movie.title %></option>
+				<% }); %>
+			</select>
+			<span><%= companyMovieNotice %></span>
+			<br>
+			<label for="companyInput">Tootmisettevõte</label>
+			<select id="companyInput" name="companyInput" disabled>
+				<option <%= companyId ? '' : 'selected' %> disabled>Vali ...</option>
+				<% companyList.forEach(function(company){ %>
+				<option value="<%= company.id %>" <%= isSel(companyId, company.id) ? 'selected' : '' %>><%= company.name %></option>
+				<% }); %>
+			</select>
+			<span><%= companyNotice %></span>
+			<br>
+		</div>
+
+		<div id="quote_fields" style="display: none;">
+			<label for="quotePimInput">Isik filmis (isik, film, amet)</label>
+			<select id="quotePimInput" name="quotePimInput" disabled>
+				<option <%= quotePimId ? '' : 'selected' %> disabled>Vali ...</option>
+				<% personInMovieList.forEach(function(pim){ %>
+				<option value="<%= pim.id %>" <%= isSel(quotePimId, pim.id) ? 'selected' : '' %>><%= pim.first_name %> <%= pim.last_name %>, <%= pim.movie_title %>, <%= pim.profession_title %><% if(pim.character_name){ %> (<%= pim.character_name %>)<% } %></option>
+				<% }); %>
+			</select>
+			<span><%= quotePimNotice %></span>
+			<br>
+			<label for="quoteTextInput">Tsitaat</label>
+			<input id="quoteTextInput" name="quoteTextInput" type="text" placeholder="Tsitaat ..." value="<%= quoteText %>" disabled>
+			<span><%= quoteTextNotice %></span>
+			<br>
+		</div>
+
+		<input id="relationSubmit" name="relationSubmit" type="submit" value="Salvesta">
+	</form>
 	<p><%= notice %></p>
+	<script>
+		// näitleja ameti id andmebaasis
+		const actorProfessionId = '<%= actorId %>';
+		const relationSelect = document.getElementById('relationInput');
+		const professionSelect = document.getElementById('professionInput');
+		const characterBlock = document.getElementById('characterBlock');
+		const characterInput = document.getElementById('characterInput');
+		const relationNames = ['person_in_movie', 'movie_genre', 'movie_production_company', 'quote'];
+
+		// näitab valitud seose osa ja keelab teiste osade väljad, et neid ei saadetaks
+		function setSectionState(section, active) {
+			section.style.display = active ? '' : 'none';
+			section.querySelectorAll('select, input').forEach(function(field){
+				field.disabled = !active;
+			});
+		}
+
+		// tegelaskuju nime väli on nähtav ainult siis, kui valitud on isik filmis ja amet on näitleja
+		function updateCharacterField() {
+			const isActor = relationSelect.value === 'person_in_movie' && professionSelect.value === actorProfessionId;
+			characterBlock.style.display = isActor ? '' : 'none';
+			characterInput.disabled = !isActor;
+		}
+
+		function updateRelationFields() {
+			relationNames.forEach(function(name){
+				setSectionState(document.getElementById(name + '_fields'), relationSelect.value === name);
+			});
+			updateCharacterField();
+		}
+
+		relationSelect.addEventListener('change', updateRelationFields);
+		professionSelect.addEventListener('change', updateCharacterField);
+		updateRelationFields();
+	</script>
 </body>
 </html>

@@ -1,0 +1,41 @@
+<html lang="et">
+<head>
+	<meta charset="utf-8">
+	<title>Karl Jakob Proso, veebiprogrammeerimine</title>
+</head>
+<body>
+	<img src="/pic/veebiprogrammeerimine_2026_TA.png" alt ="banner">	<h1>Karl Jakob Proso, veebiprogrammeerimine</h1>
+	<h1>Eesti filmi seosed</h1>
+	<p>Siin lehel on näha eesti filmi seoseid.</p>
+	<hr>
+	<ul>
+		<li><a href="/">Avalehele</a></li>
+		<li><a href="/eestifilm">Eesti filmi avaleht</a></li>
+	</ul>
+	<hr>
+	<h2>Isikud filmides</h2>
+	<ol>
+	<% personInMovieList.forEach(function(pim){ %>
+	<li><%= pim.first_name %> <%= pim.last_name %>, <%= pim.movie_title %>, <%= pim.profession_title %><% if(pim.character_name){ %>, tegelaskuju <%= pim.character_name %><% } %></li>
+	<% }); %>
+	</ol>
+	<h2>Filmide žanrid</h2>
+	<ol>
+	<% movieGenreList.forEach(function(mg){ %>
+	<li><%= mg.movie_title %>, <%= mg.genre_name %></li>
+	<% }); %>
+	</ol>
+	<h2>Filmide tootmisettevõtted</h2>
+	<ol>
+	<% movieCompanyList.forEach(function(mc){ %>
+	<li><%= mc.movie_title %>, <%= mc.company_name %></li>
+	<% }); %>
+	</ol>
+	<h2>Tsitaadid</h2>
+	<ol>
+	<% quoteList.forEach(function(quote){ %>
+	<li>„<%= quote.text %>“, <%= quote.first_name %> <%= quote.last_name %>, <%= quote.movie_title %>, <%= quote.profession_title %></li>
+	<% }); %>
+	</ol>
+</body>
+</html>
