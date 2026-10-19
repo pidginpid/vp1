@@ -16,7 +16,7 @@
 	<h2>Isikud filmides</h2>
 	<ol>
 	<% personInMovieList.forEach(function(pim){ %>
-	<li><%= pim.first_name %> <%= pim.last_name %>, <%= pim.movie_title %>, <%= pim.profession_title %><% if(pim.character_name){ %>, tegelaskuju <%= pim.character_name %><% } %></li>
+	<li><%= pim.first_name %> <%= pim.last_name %>, <%= pim.movie_title %>, <%= pim.profession_title %><% if(pim.character_name){ %>, mängib tegelast <%= pim.character_name %><% } %></li>
 	<% }); %>
 	</ol>
 	<h2>Filmide žanrid</h2>

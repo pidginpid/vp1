@@ -17,7 +17,7 @@ app.set('view engine', 'ejs');
 // määran ühe päris kataloogi virtuaalses serveris kättesaadavaks
 app.use(express.static('public'));
 // parsime vormiandmed, et req.body oleks kättesaadav (false, kuna vormis on ainult tekst)
-app.use(bodyparser.urlencoded({extended: false}));
+app.use(bodyparser.urlencoded({extended: true})); //kui vormidest ainult tekst, siis "false"
 
 // loon andmebaasiühenduse
 /* const conn = mysql.createConnection({
@@ -262,5 +262,9 @@ app.use('/eestifilm', eestifilmRouter);
 //Külastuse registreerimise marsruut
 const kulastuseRoute = require('./routes/kulastuseRoute')
 app.use('/regvisit', kulastuseRoute);
+
+// galeriipiltide üleslaadimine
+const galleryPhotoUploadRouter = require('./routes/galleryPhotoUploadRoutes')
+app.use('/galleryPhotoUpload', galleryPhotoUploadRouter);
 
 app.listen(5117);
