@@ -30,6 +30,7 @@ app.use(bodyparser.urlencoded({extended: true})); //kui vormidest ainult tekst, 
 // marsruudid
 app.get('/', async (req, res)=>{
 	//res.send('Express.js läks käima ja serveerib meile veebi.');
+	let conn;
 	try {
 		const dayNow = dateET.currentDay();
 		const dateNow = dateET.fullDate();
@@ -39,10 +40,28 @@ app.get('/', async (req, res)=>{
 		// viimane element on tühi (lõpus olev semikoolon), seega viimane külastus on eelviimane
 		let lastVisitParts = visitList[visitList.length - 2].split(',');
 		// osad: [0] nimi, [1] kuupäev, [2] kellaaeg
-		res.render('index', {lastVisit: 'Viimati registreeriti külastus ' + lastVisitParts[1].trim() + ', kell ' + lastVisitParts[2].trim() + ' kui seda tegi ' + lastVisitParts[0].trim(), dayNow: dayNow, dateNow: dateNow, timeNow: timeNow});
+		// kõige uuem avalik foto (privaatsus 3), mida pole kustutatud
+		conn = await mysql.createConnection({
+			host: process.env.DB_HOST,
+			user: process.env.DB_USER,
+			password: process.env.DB_PASS,
+			database: process.env.DB_NAME
+		});
+		const sqlReq = 'SELECT filename, alttext FROM galleryphotos WHERE id=(SELECT MAX(id) FROM galleryphotos WHERE privacy=? AND deleted IS NULL)';
+		const [sqlRes] = await conn.execute(sqlReq, [3]);
+		let photoAlt = sqlRes[0].alttext;
+		if(!photoAlt) {
+			photoAlt = 'Uusim avalik foto';
+		}
+		res.render('index', {lastVisit: 'Viimati registreeriti külastus ' + lastVisitParts[1].trim() + ', kell ' + lastVisitParts[2].trim() + ' kui seda tegi ' + lastVisitParts[0].trim(), dayNow: dayNow, dateNow: dateNow, timeNow: timeNow, photoFile: sqlRes[0].filename, photoAlt: photoAlt});
 		//res.render('index', {dayNow: dayNow, dateNow: dateNow, timeNow: timeNow});
 	} catch(err) {
 		res.render('index', {lastVisit: 'Ei leidnud ühtegi külastust!'})
+	}
+	finally {
+		if(conn){
+			await conn.end();
+		}
 	}
 });
 
@@ -267,7 +286,7 @@ app.use('/regvisit', kulastuseRoute);
 const galleryPhotoUploadRouter = require('./routes/galleryPhotoUploadRoutes')
 app.use('/galleryPhotoUpload', galleryPhotoUploadRouter);
 
-const galleryPhotosRouter = require('./routes/galleryPhotosRoutes')
-app.use('/galleryPhotos', galleryPhotosRoutes);
+const galleryPhotosRouter = require('./routes/galleryPhotoRoutes')
+app.use('/galleryPhotos', galleryPhotosRouter);
 
 app.listen(5117);

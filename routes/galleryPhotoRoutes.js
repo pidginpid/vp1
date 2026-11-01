@@ -11,7 +11,7 @@ const upload = multer({dest: './public/gallery/orig/'});
 
 //kontrollerid
 const {
- 	galleryPhotos } = require ('../controllers/galleryPhotoUploadControllers');
+ 	galleryPhotos } = require ('../controllers/galleryPhotosController');
 
 router.route('/').get(galleryPhotos);
 

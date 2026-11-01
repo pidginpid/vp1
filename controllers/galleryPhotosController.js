@@ -17,16 +17,18 @@ const galleryPhotos = async (req, res) => {
 			password: process.env.DB_PASS,
 			database: process.env.DB_NAME
 		});
-		const sqlReq = 'SELECT filename, alttext FROM galleryphotos WHERE id=(SELECT MAX(id) FROM galleryphotos WHERE privacy=? AND deleted IS NULL)';
-		const [sqlRes] = await conn.execute(sqlReq);
+		const sqlReq = 'SELECT filename, alttext FROM galleryphotos WHERE privacy >= ? AND deleted IS NULL';
+		const [sqlRes] = await conn.execute(sqlReq, [2]);
 		console.log(sqlRes);
-		if(sqlRes[0].alttext === null) {
-			sqlRes.alttext = 'Uusim avalik foto'
-		};
-		res.render('inimesed', {picture: sqlRes});
+		sqlRes.forEach(function(photo){
+			if(!photo.alttext) {
+				photo.alttext = 'Uusim avalik foto';
+			}
+		});
+		res.render('galleryPhotos', {pictureList: sqlRes});
 	} catch (err) {
 		console.log('Viga andmebaasist lugemisel: ' + err);
-		res.render('galleryPhotos', {picture: []});
+		res.render('galleryPhotos', {pictureList: []});
 	}
 	finally {
 		if(conn){

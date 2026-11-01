@@ -22,13 +22,16 @@ const galleryPhotoUploadPost = async (req, res) => {
 		// genereerime oma failinime
 		const fileName = 'vp_' + Date.now() + '.jpg';
 		await fs.rename(req.file.path, req.file.destination + fileName)
-		// pildi suuruse muutmine (max 800 x 600)
-		await sharp(req.file.destination + fileName).resize(800, 600).jpeg({quality: 90}).toFile('./public/gallery/normal/' + fileName);
+		// pildi suuruse muutmine (max 800 x 600) ja vesimärgi lisamine
+		await sharp(req.file.destination + fileName).resize(800, 600).jpeg({quality: 90}).composite([{
+			input: './public/pic/watermark.png',
+			gravity: 'southeast'
+		}]).toFile(process.env.UPLOAD_RESIZED_PATH + fileName);
 		// teeme pisipildi (100 x 100)
 		await sharp(req.file.destination + fileName).resize(100, 100).jpeg({quality: 15}).composite([{
 			input: './public/pic/watermark.png',
 			gravity: 'southeast'
-		}]).toFile('./public/gallery/thumbs/' + fileName);
+		}]).toFile(process.env.UPLOAD_THUMBNAIL_PATH + fileName);
 		let sqlReq = 'INSERT INTO galleryphotos (filename, origname, alttext, privacy, userid) VALUES (?, ?, ?, ?, ?)';
 		const userId = 1; // see on ajutine, kuni päris kasutajakontod teeme
 		conn = await mysql.createConnection({
