@@ -12,11 +12,14 @@ const upload = multer({dest: './public/gallery/orig/'});
 //kontrollerid
 const {
 	galleryPhotoUpload,
-	galleryPhotoUploadPost } = require ('../controllers/galleryPhotoUploadControllers');
+	galleryPhotoUploadPost,
+ 	galleryPhotos } = require ('../controllers/galleryPhotoUploadControllers');
 
 router.route('/').get(galleryPhotoUpload);
 
 // post osa suunatakse läbi vahevara - upload
 router.route('/').post(upload.single('photoInput'), galleryPhotoUploadPost);
+
+router.route('/galleryPhotos').get(galleryPhotos);
 
 module.exports = router;

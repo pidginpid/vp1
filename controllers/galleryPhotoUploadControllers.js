@@ -3,7 +3,7 @@ const fs = require('fs').promises;
 const sharp = require('sharp');
 
 //@desc home page for uploading gallery photos
-//@route GET /galleryPhotoUpload 
+//@route GET /galleryPhotoUpload
 //@access public
 
 const galleryPhotoUpload = (req, res) => {
@@ -11,7 +11,7 @@ const galleryPhotoUpload = (req, res) => {
 };
 
 //@desc home page for uploading gallery photos
-//@route POST /galleryPhotoUpload 
+//@route POST /galleryPhotoUpload
 //@access public
 
 const galleryPhotoUploadPost = async (req, res) => {
@@ -25,7 +25,10 @@ const galleryPhotoUploadPost = async (req, res) => {
 		// pildi suuruse muutmine (max 800 x 600)
 		await sharp(req.file.destination + fileName).resize(800, 600).jpeg({quality: 90}).toFile('./public/gallery/normal/' + fileName);
 		// teeme pisipildi (100 x 100)
-		await sharp(req.file.destination + fileName).resize(80, 80).jpeg({quality: 15}).toFile('./public/gallery/thumbs/' + fileName);
+		await sharp(req.file.destination + fileName).resize(100, 100).jpeg({quality: 15}).composite([{
+			input: './public/pic/watermark.png',
+			gravity: 'southeast'
+		}]).toFile('./public/gallery/thumbs/' + fileName);
 		let sqlReq = 'INSERT INTO galleryphotos (filename, origname, alttext, privacy, userid) VALUES (?, ?, ?, ?, ?)';
 		const userId = 1; // see on ajutine, kuni päris kasutajakontod teeme
 		conn = await mysql.createConnection({
@@ -45,10 +48,45 @@ const galleryPhotoUploadPost = async (req, res) => {
 			await conn.end();
 		}
 	}
-	
+
 };
+
+//@desc home page for viewing gallery photos
+//@route GET /galleryPhotos
+//@access public
+
+const galleryPhotos = async (req, res) => {
+	//console.log('Andmebaasiserver on: ' + process.env.DB_HOST);
+	const mysql = require('mysql2/promise');
+	let conn;
+	try {
+		conn = await mysql.createConnection({
+			host: process.env.DB_HOST,
+			user: process.env.DB_USER,
+			password: process.env.DB_PASS,
+			database: process.env.DB_NAME
+		});
+		const sqlReq = 'SELECT filename, alttext FROM galleryphotos WHERE id=(SELECT MAX(id) FROM galleryphotos WHERE privacy=3 OR privacy=2 AND deleted IS NULL)';
+		const [sqlRes] = await conn.execute(sqlReq);
+		console.log(sqlRes);
+		if(sqlRes.alttext === '') {
+			sqlRes.alttext = 'Uusim avalik foto'
+		};
+		res.render('inimesed', {picture: sqlRes});
+	} catch (err) {
+		console.log('Viga andmebaasist lugemisel: ' + err);
+		res.render('galleryPhotos', {picture: []});
+	}
+	finally {
+		if(conn){
+			await conn.end();
+		}
+	}
+}
+
 
 module.exports = {
 	galleryPhotoUpload,
 	galleryPhotoUploadPost
+	galleryPhotos
 }
