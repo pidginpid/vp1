@@ -267,4 +267,7 @@ app.use('/regvisit', kulastuseRoute);
 const galleryPhotoUploadRouter = require('./routes/galleryPhotoUploadRoutes')
 app.use('/galleryPhotoUpload', galleryPhotoUploadRouter);
 
+const galleryPhotosRouter = require('./routes/galleryPhotosRoutes')
+app.use('/galleryPhotos', galleryPhotosRoutes);
+
 app.listen(5117);
