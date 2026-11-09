@@ -124,6 +124,16 @@ app.get('/lastvisit', async (req, res)=>{
 	}
 });
 
+//sisseloginud kasutajate avaleht
+app.get('/home', (req, res)=>{
+	res.render('home');
+});
+
+//väljalogimine
+app.get('/logout', (req, res)=>{
+	res.redirect('/');
+});
+
 /* app.get('/eestifilm', (req,res)=>{
 	res.render('eestifilm');
 }); */
@@ -289,7 +299,12 @@ app.use('/galleryPhotoUpload', galleryPhotoUploadRouter);
 const galleryPhotosRouter = require('./routes/galleryPhotoRoutes')
 app.use('/galleryPhotos', galleryPhotosRouter);
 
+//kasutajakonto loomise marsruut
 const signupRouter = require('./routes/signupRoutes')
 app.use('/signup', signupRouter);
+
+//Sisselogimise marsruut
+const signinRouter = require('./routes/signinRoutes')
+app.use('/signin', signinRouter);
 
 app.listen(5117);

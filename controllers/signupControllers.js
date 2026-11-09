@@ -65,7 +65,7 @@ const signupPagePost = async (req, res) => {
 			database: process.env.DB_NAME
 		});
 		let sqlReq = 'SELECT id FROM users WHERE email = ?';
-		const [] = await conn.execute(sqlReq, [email]);
+		const [users] = await conn.execute(sqlReq, [email]);
 		if (users.length > 0){
 			notice = 'Selline kasutaja on juba olemas!';
 			return res.render('signup', {notice: notice});
@@ -86,7 +86,7 @@ const signupPagePost = async (req, res) => {
 			res.render('signup', {notice: notice});
 	} catch (err) {
 		console.log('Viga: ' + err);
-		res.render('signup');
+		res.render('signup', {notice: notice});
 	} finally {
 		if(conn) {
 			await conn.end();

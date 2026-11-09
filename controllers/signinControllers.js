@@ -1,0 +1,95 @@
+const mysql = require('mysql2/promise');
+const argon = require('argon2');
+
+//@desc home page for viewing sign in page
+//@route GET /signin
+//@access public
+
+const signinPage = (req, res) => {
+	res.render('signin', {notice: 'Ootan andmeid!'});
+};
+
+//@desc post request for sign up
+//@route POST /signin
+//@access public
+
+const signinPagePost = async (req, res) => {
+	let conn;
+	let notice = '';
+	//puhastame andmeid ja valideerime (kontrollime)
+	const email = req.body.emailInput.trim();
+	const password = req.body.passwordInput;
+	
+	//kontrollime, kas kõik on olemas
+	if(!email || !password){
+		notice = 'Andmeid on puudu';
+		return res.render('signin', {notice: notice});
+	}
+	
+	try {
+		conn = await mysql.createConnection({
+			host: process.env.DB_HOST,
+			user: process.env.DB_USER,
+			password: process.env.DB_PASS,
+			database: process.env.DB_NAME
+		});
+		let sqlReq = 'SELECT id FROM users WHERE email = ?';
+		const [users] = await conn.execute(sqlReq, [email]);
+		if (users.length === 0){
+			notice = 'Sisestatud kasutajatunnus ja/või parool oli vale!';
+			return res.render('signin', {notice: notice});
+		}
+		//kui on olemas, kas parool klapib
+		const match = await argon.verify(users[0].password, password);
+		if(match){
+			console.log('Oled sisse loginud kasutaja: ' + users[0].id);
+			return res.redirect('home');
+		} else {
+			notice = 'Sisestatud kasutajatunnus ja/või parool oli vale!';
+			return res.render('signin', {notice: notice});
+		}
+		sqlReq = 'INSERT INTO users (firstname, lastname, birthdate, gender, email, password) VALUES (?, ?, ?, ?, ?, ?)';
+	} catch (err) {
+		console.log('Viga: ' + err);
+		res.render('signin', {notice: notice});
+	} finally {
+		if(conn) {
+			await conn.end();
+		}
+	}
+	
+};
+
+/* const signupPagePost = async (req, res) => {
+	console.log(req.body);
+	console.log(req.file);
+	let conn;
+	try {
+		// genereerime oma failinime
+		let sqlReq = 'INSERT INTO users (filename, origname, alttext, privacy, userid) VALUES (?, ?, ?, ?, ?)';
+		const userId = 1; // see on ajutine, kuni päris kasutajakontod teeme
+		conn = await mysql.createConnection({
+			host: process.env.DB_HOST,
+			user: process.env.DB_USER,
+			password: process.env.DB_PASS,
+			database: process.env.DB_NAME
+		});
+		const [result] = await conn.execute(sqlReq, [fileName, req.file.originalname, req.body.altInput, req.body.privacyInput, userId]);
+		console.log('Salvestati kirje id: ' + result.insertId); // teinekord kasulik teada
+		res.render('signup');
+	} catch (err) {
+		console.log('Viga: ' + err);
+		res.render('signup');
+	} finally {
+		if(conn) {
+			await conn.end();
+		}
+	}
+
+}; */
+
+
+module.exports = {
+	signinPage,
+	signinPagePost
+}
