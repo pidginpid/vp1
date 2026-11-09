@@ -289,4 +289,7 @@ app.use('/galleryPhotoUpload', galleryPhotoUploadRouter);
 const galleryPhotosRouter = require('./routes/galleryPhotoRoutes')
 app.use('/galleryPhotos', galleryPhotosRouter);
 
+const signupRouter = require('./routes/signupRoutes')
+app.use('/signup', signupRouter);
+
 app.listen(5117);
