@@ -33,7 +33,7 @@ const signinPagePost = async (req, res) => {
 			password: process.env.DB_PASS,
 			database: process.env.DB_NAME
 		});
-		let sqlReq = 'SELECT id FROM users WHERE email = ?';
+		let sqlReq = 'SELECT id, password FROM users WHERE email = ?';
 		const [users] = await conn.execute(sqlReq, [email]);
 		if (users.length === 0){
 			notice = 'Sisestatud kasutajatunnus ja/või parool oli vale!';
