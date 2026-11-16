@@ -7,6 +7,7 @@ const mysql = require('mysql2/promise');
 // moodul .env faili lugemiseks, keskkonnamuutuja parsimiseks
 require('dotenv').config();
 const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
 
 const checkLogin = require('./src/checkLogin.js');
 const dateET = require('./src/dateFindET');
@@ -22,10 +23,25 @@ app.use(express.static('public'));
 // parsime vormiandmed, et req.body oleks kättesaadav (false, kuna vormis on ainult tekst)
 app.use(bodyparser.urlencoded({extended: true})); //kui vormidest ainult tekst, siis "false"
 // võtan kasutusele sessiooni
-app.use(session({
+/* app.use(session({
 	secret: process.env.SES_SECRET,
 	saveUninitialized: false,
 	resave: false
+})); */
+const sessionStore = new MySQLStore({
+	host: process.env.DB_HOST,
+	user: process.env.DB_USER,
+	password: process.env.DB_PASS,
+	database: process.env.DB_NAME
+});
+app.use(session({
+	secret: process.env.SES_SECRET,
+	store: sessionStore,
+	saveUninitialized: false,
+	resave: false,
+	cookie: {
+		maxAge: 1000*60*60*1 // sessiooni küpsiste aegumisaeg
+	}
 }));
 
 // loon andmebaasiühenduse

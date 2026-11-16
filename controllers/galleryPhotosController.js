@@ -4,7 +4,7 @@ const sharp = require('sharp');
 
 //@desc home page for viewing gallery photos
 //@route GET /galleryPhotos
-//@access public
+//@access private
 
 const galleryPhotos = async (req, res) => {
 	//console.log('Andmebaasiserver on: ' + process.env.DB_HOST);
