@@ -6,6 +6,9 @@ const bodyparser = require('body-parser');
 const mysql = require('mysql2/promise');
 // moodul .env faili lugemiseks, keskkonnamuutuja parsimiseks
 require('dotenv').config();
+const session = require('express-session');
+
+const checkLogin = require('./src/checkLogin.js');
 const dateET = require('./src/dateFindET');
 
 const textRef = 'public/txt/vanasonad.txt';
@@ -18,6 +21,12 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 // parsime vormiandmed, et req.body oleks kättesaadav (false, kuna vormis on ainult tekst)
 app.use(bodyparser.urlencoded({extended: true})); //kui vormidest ainult tekst, siis "false"
+// võtan kasutusele sessiooni
+app.use(session({
+	secret: process.env.SES_SECRET,
+	saveUninitialized: false,
+	resave: false
+}));
 
 // loon andmebaasiühenduse
 /* const conn = mysql.createConnection({
@@ -125,7 +134,7 @@ app.get('/lastvisit', async (req, res)=>{
 });
 
 //sisseloginud kasutajate avaleht
-app.get('/home', (req, res)=>{
+app.get('/home', checkLogin.isLogin, (req, res)=>{
 	res.render('home');
 });
 
