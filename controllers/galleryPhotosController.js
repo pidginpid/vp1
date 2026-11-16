@@ -17,13 +17,14 @@ const galleryPhotos = async (req, res) => {
 			password: process.env.DB_PASS,
 			database: process.env.DB_NAME
 		});
-		const sqlReq = 'SELECT filename, alttext FROM galleryphotos WHERE privacy >= ? AND deleted IS NULL';
+		const sqlReq = 'SELECT id, filename, alttext FROM galleryphotos WHERE privacy >= ? AND deleted IS NULL';
 		const [sqlRes] = await conn.execute(sqlReq, [2]);
 		console.log(sqlRes);
 		sqlRes.forEach(function(photo){
 			if(!photo.alttext) {
 				photo.alttext = 'Uusim avalik foto';
 			}
+			galleryData.push({src: photo[i].filename, alt: altText, id: photo[i].id});
 		});
 		res.render('galleryPhotos', {pictureList: sqlRes});
 	} catch (err) {
