@@ -7,12 +7,28 @@ const privacyTexts = {
 	3: 'Avalik (kõik näevad)'
 };
 
+//@desc Photogallery opening page
+//@route GET /galleryPhotos
+//@access private
+
+const galleryOwnHome = (req, res) => {
+	res.redirect('/galleryOwnPhotos/edit/1');
+}
+
 //@desc page for viewing the logged in user's own gallery photos
 //@route GET /galleryOwnPhotos
 //@access private
 
 const galleryOwnPhotos = async (req, res) => {
 	let conn;
+	let page = parseInt(req.params.page);
+	let skip = 0;
+	const limit = 5;
+	const privacy = 2;
+	// kontrollime, et lk number poleksliiga väike või, et ta üldse on number
+	if(page < 1 || isNaN){
+		page = 1;
+	}
 	try {
 		conn = await mysql.createConnection({
 			host: process.env.DB_HOST,

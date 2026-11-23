@@ -6,8 +6,11 @@ router.use(checkLogin.isLogin);
 
 //kontrollerid
 const {
-	galleryOwnPhotos } = require ('../controllers/galleryOwnPhotosControllers');
+	galleryOwnPhotos,
+	galleryOwnPhotosHome } = require ('../controllers/galleryOwnPhotosControllers');
 
 router.route('/').get(galleryOwnPhotos);
+
+router.route('/edit/:page').get(galleryOwnPhotosHome);
 
 module.exports = router;

@@ -13,8 +13,13 @@ const upload = multer({dest: './public/gallery/orig/'});
 
 //kontrollerid
 const {
- 	galleryPhotos } = require ('../controllers/galleryPhotosController');
+ 	galleryPhotos,
+	galleryHome } = require ('../controllers/galleryPhotosController');
 
-router.route('/').get(galleryPhotos);
+router.route('/').get(galleryHome);
+
+router.route('/:page').get(galleryPhotos);
+
+// router.route('my').get(myGalleryPage);
 
 module.exports = router;

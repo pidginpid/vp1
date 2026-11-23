@@ -2,8 +2,16 @@ const mysql = require('mysql2/promise');
 const fs = require('fs').promises;
 const sharp = require('sharp');
 
-//@desc home page for viewing gallery photos
+//@desc Photogallery opening page
 //@route GET /galleryPhotos
+//@access private
+
+const galleryHome = (req, res) => {
+	res.redirect('/galleryPhotos/1');
+}
+
+//@desc Photogallery
+//@route GET /galleryPhotos/:page
 //@access private
 
 const galleryPhotos = async (req, res) => {
@@ -11,6 +19,14 @@ const galleryPhotos = async (req, res) => {
 	const mysql = require('mysql2/promise');
 	let conn;
 	let galleryData = [];
+	let page = parseInt(req.params.page);
+	let skip = 0;
+	const limit = 5;
+	const privacy = 2;
+	// kontrollime, et lk number poleksliiga väike või, et ta üldse on number
+	if(page < 1 || isNaN){
+		page = 1;
+	}
 	try {
 		conn = await mysql.createConnection({
 			host: process.env.DB_HOST,
@@ -18,8 +34,34 @@ const galleryPhotos = async (req, res) => {
 			password: process.env.DB_PASS,
 			database: process.env.DB_NAME
 		});
-		const sqlReq = 'SELECT id, filename, alttext FROM galleryphotos WHERE privacy >= ? AND deleted IS NULL';
-		const [sqlRes] = await conn.execute(sqlReq, [2]);
+		// uurime, palju galeriise sobivaid fotosid üldse on
+		let sqlReq = 'SELECT count(id) AS photos FROM galleryphotos WHERE privacy >= ? AND deleted IS NULL';
+		const [countResult] = await conn.execute(sqlReq, [privacy]);
+		const photoCount = countResult[0].photos;
+		// kui leheküljenumber on liiga suur
+		if((page - 1) * limit >= photoCount){
+			// valin kõige viimase võimaliku lehekülje
+			page = Math.max(1, Math.ceil(photoCount / limit));
+		}
+		skip = (page - 1) * limit;
+		
+		// teeme navigatsioonilingid
+		let galleryLinks
+		// tagasi
+		if(page === 1){
+			galleryLinks = 'Eelmine leht &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;';
+		} else {
+			galleryLinks = '<a href="/gallery/${page - 1}">Eelmine leht</a> &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;';
+		}
+		// edasi
+		if(page * limit >= photoCount){
+			galleryLinks += 'Järgmine leht';
+		} else {
+			galleryLinks += '<a href="/gallery/${page + 1}">Järgmine leht</a>';
+		}
+		
+		sqlReq = 'SELECT id, filename, alttext FROM galleryphotos WHERE privacy >= ? AND deleted IS NULL';
+		const [sqlRes] = await conn.execute(sqlReq, [2, skip]);
 		console.log(sqlRes);
 		sqlRes.forEach(function(photo){
 			if(!photo.alttext) {
@@ -27,10 +69,11 @@ const galleryPhotos = async (req, res) => {
 			}
 			galleryData.push({src: photo.filename, alt: photo.alttext, id: photo.id});
 		});
-		res.render('galleryPhotos', {galleryData: galleryData, pictureList: sqlRes});
+		res.render('galleryPhotos', {galleryData: galleryData, pictureList: sqlRes, links: galleryLinks});
 	} catch (err) {
 		console.log('Viga andmebaasist lugemisel: ' + err);
-		res.render('galleryPhotos', {galleryData: galleryData, pictureList: []});
+		gallerylinks = 'Eelmine leht &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; Järgmine leht';
+		res.render('galleryPhotos', {galleryData: galleryData, pictureList: [], links: galleryLinks});
 	}
 	finally {
 		if(conn){
@@ -41,5 +84,6 @@ const galleryPhotos = async (req, res) => {
 
 
 module.exports = {
-	galleryPhotos
+	galleryPhotos,
+	galleryHome
 }

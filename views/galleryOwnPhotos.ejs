@@ -29,7 +29,7 @@
 		</dialog>
 		<ul id="gallery" class="gallery">
 		<% pictureList.forEach(function(picture){ %>
-		<li><img class="thumbs" data-id="<%=picture.id%>" src='/gallery/thumbs/<%= picture.filename %>' data-filename="<%= picture.filename %>" alt='<%= picture.alttext %>'><br><%= picture.alttext%><br>Privaatsus: <%= picture.privacyText %></li>
+		<li><a href="galleryOwnPhotos/edit/<%= picture.id %>"><img class="thumbs" data-id="<%=picture.id%>" src='/gallery/thumbs/<%= picture.filename %>' data-filename="<%= picture.filename %>" alt='<%= picture.alttext %>'></a><br><%= picture.alttext%><br>Privaatsus: <%= picture.privacyText %></li>
 		<% }); %>
 	</ul>
 </body>

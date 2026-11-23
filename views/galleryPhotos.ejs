@@ -27,6 +27,9 @@
 				</div>
 			</div>
 		</dialog>
+		<!-- Galerii lehtede navigatsioon -->
+		<p><%- links %></p>
+		
 		<ul id="gallery" class="gallery">
 		<% pictureList.forEach(function(picture){ %>
 		<li><img class="thumbs" data-id="<%=picture.id%>" src='/gallery/thumbs/<%= picture.filename %>' data-filename="<%= picture.filename %>" alt='<%= picture.alttext %>'><br><%= picture.alttext%></li>
