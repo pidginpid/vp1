@@ -11,6 +11,6 @@ const {
 
 router.route('/').get(galleryOwnPhotos);
 
-router.route('/edit/:page').get(galleryOwnPhotosHome);
+router.route('/edit/:id').get(galleryOwnPhotosHome);
 
 module.exports = router;

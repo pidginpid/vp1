@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+	<meta charset="utf-8">
+	<title>Karl Jakob Proso, veebiprogrammeerimine</title>
+	<link rel="stylesheet" href="/style/gallery.css">
+	<script src="/script/gallery.js" defer></script>
+</head>
+<body>
+	<img src="/pic/veebiprogrammeerimine_2026_TA.png" alt ="banner">	<h1>Karl Jakob Proso, veebiprogrammeerimine</h1>
+	<p>Sisse logitud: <%= userFirstName %> <%= userLastName %></p>
+	<h1>Minu galeriipildid</h1>
+	<p>Siin lehel saab vaadata oma üleslaaditud fotosid.</p>
+	<hr>
+	<ul>
+		<li><a href="/home">Avalehele</a></li>
+		<li><a href="/logout">Logi välja</a></li>
+	</ul>
+
+		<hr>
+		<dialog id="modal" class="modalarea">
+			<span id="modalClose" class="modalclose">&times;</span>
+			<div class="modalhorizontal">
+				<div class="modalvertical">
+					<p id="modalCaption"></p>
+					<img id="modalImage" src="../pic/empty.png" alt="galeriipilt">
+				</div>
+			</div>
+		</dialog>
+		<ul id="gallery" class="gallery">
+		<img class="thumbs" data-id="<%=picture.id%>" src='/gallery/thumbs/<%= picture.filename %>' data-filename="<%= picture.filename %>" alt='<%= picture.alttext %>'><br><%= picture.alttext%><br>Privaatsus: <%= picture.privacyText %>
+		<form method="UPDATE">
+		<input id="privacyInput1" name="privacyInput" type="radio" value="1" checked>
+		<label for="privacyInput1">Privaatne (ainult ise näen)</label>
+		<br>
+		<input id="privacyInput2" name="privacyInput" type="radio" value="2" checked>
+		<label for="privacyInput2">Sisseloginud kasutajatele</label>
+		<br>
+		<input id="privacyInput3" name="privacyInput" type="radio" value="3" checked>
+		<label for="privacyInput3">Avalik (kõik näevad)</label>
+		<br>
+		<label for "altInput">Foto alternatiivtekst (alt)</label>
+		<input id="altInput" name="altInput" type="text" placeholder="<%=picture.alttext%>">
+		<br>
+		<input type="submit" id="userSubmit" name="userSubmit" value="Save changes">
+	</form>
+	</ul>
+</body>
+</html>
