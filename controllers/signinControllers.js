@@ -19,13 +19,13 @@ const signinPagePost = async (req, res) => {
 	//puhastame andmeid ja valideerime (kontrollime)
 	const email = req.body.emailInput.trim();
 	const password = req.body.passwordInput;
-	
+
 	//kontrollime, kas kõik on olemas
 	if(!email || !password){
 		notice = 'Andmeid on puudu';
 		return res.render('signin', {notice: notice});
 	}
-	
+
 	try {
 		conn = await mysql.createConnection({
 			host: process.env.DB_HOST,
@@ -33,7 +33,7 @@ const signinPagePost = async (req, res) => {
 			password: process.env.DB_PASS,
 			database: process.env.DB_NAME
 		});
-		let sqlReq = 'SELECT id, password FROM users WHERE email = ?';
+		let sqlReq = 'SELECT id, password, firstname, lastname FROM users WHERE email = ?';
 		const [users] = await conn.execute(sqlReq, [email]);
 		if (users.length === 0){
 			notice = 'Sisestatud kasutajatunnus ja/või parool oli vale!';
@@ -43,8 +43,10 @@ const signinPagePost = async (req, res) => {
 		const match = await argon.verify(users[0].password, password);
 		if(match){
 			//console.log('Oled sisse loginud kasutaja: ' + users[0].id);
-			// käivitame sessiooni ja salvestame sessioonimuutuja
+			// käivitame sessiooni ja salvestame sessioonimuutujad
 			req.session.userId = users[0].id;
+			req.session.firstName = users[0].firstname;
+			req.session.lastName = users[0].lastname;
 			return res.redirect('home');
 		} else {
 			notice = 'Sisestatud kasutajatunnus ja/või parool oli vale!';
@@ -59,7 +61,7 @@ const signinPagePost = async (req, res) => {
 			await conn.end();
 		}
 	}
-	
+
 };
 
 /* const signupPagePost = async (req, res) => {

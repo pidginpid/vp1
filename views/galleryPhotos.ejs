@@ -1,12 +1,14 @@
+<!DOCTYPE html>
 <html lang="et">
 <head>
 	<meta charset="utf-8">
 	<title>Karl Jakob Proso, veebiprogrammeerimine</title>
 	<link rel="stylesheet" href="/style/gallery.css">
-	<script> src="/script/gallery.js" defer=</script>
+	<script src="/script/gallery.js" defer></script>
 </head>
 <body>
 	<img src="/pic/veebiprogrammeerimine_2026_TA.png" alt ="banner">	<h1>Karl Jakob Proso, veebiprogrammeerimine</h1>
+	<p>Sisse logitud: <%= userFirstName %> <%= userLastName %></p>
 	<h1>Galerisse fotod</h1>
 	<p>Siin lehel saab galeriis vaadata fotosi.</p>
 	<hr>
@@ -14,7 +16,7 @@
 		<li><a href="/home">Avalehele</a></li>
 		<li><a href="/logout">Logi välja</a></li>
 	</ul>
-	
+
 		<hr>
 		<dialog id="modal" class="modalarea">
 			<span id="modalClose" class="modalclose">&times;</span>
@@ -24,10 +26,11 @@
 					<img id="modalImage" src="../pic/empty.png" alt="galeriipilt">
 				</div>
 			</div>
-		<div id="gallery" class="gallery">
+		</dialog>
+		<ul id="gallery" class="gallery">
 		<% pictureList.forEach(function(picture){ %>
-		<li><img class="thumbs" data-id="<%=picture.id%>" src='/gallery/normal/<%= picture.filename %>' data-filename="<%=picture.src%>>" '/gallery/normal/<%= picture.filename %>' alt='<%= picture.alttext %>'><br><%= picture.alttext%></li>
+		<li><img class="thumbs" data-id="<%=picture.id%>" src='/gallery/thumbs/<%= picture.filename %>' data-filename="<%= picture.filename %>" alt='<%= picture.alttext %>'><br><%= picture.alttext%></li>
 		<% }); %>
-	</div>
+	</ul>
 </body>
 </html>

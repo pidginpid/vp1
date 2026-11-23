@@ -27,9 +27,12 @@ const galleryPhotoUploadPost = async (req, res) => {
 			input: './public/pic/watermark.png',
 			gravity: 'southeast'
 		}]).toFile(process.env.UPLOAD_RESIZED_PATH + fileName);
+		// pisipildi vesimärk on 20% pisipildi laiusest (100 x 100 pildil 20 px)
+		const thumbWatermarkWidth = Math.round(100 * 0.2);
+		const thumbWatermark = await sharp('./public/pic/watermark.png').resize({width: thumbWatermarkWidth}).toBuffer();
 		// teeme pisipildi (100 x 100)
 		await sharp(req.file.destination + fileName).resize(100, 100).jpeg({quality: 15}).composite([{
-			input: './public/pic/watermark.png',
+			input: thumbWatermark,
 			gravity: 'southeast'
 		}]).toFile(process.env.UPLOAD_THUMBNAIL_PATH + fileName);
 		let sqlReq = 'INSERT INTO galleryphotos (filename, origname, alttext, privacy, userid) VALUES (?, ?, ?, ?, ?)';

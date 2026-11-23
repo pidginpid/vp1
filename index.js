@@ -44,6 +44,13 @@ app.use(session({
 	}
 }));
 
+// teen sisseloginud kasutaja nime sessioonist kõigile vaadetele (.ejs failidele) kättesaadavaks
+app.use((req, res, next) => {
+	res.locals.userFirstName = (req.session && req.session.firstName) || null;
+	res.locals.userLastName = (req.session && req.session.lastName) || null;
+	next();
+});
+
 // loon andmebaasiühenduse
 /* const conn = mysql.createConnection({
 	host: 'localhost',
@@ -156,7 +163,13 @@ app.get('/home', checkLogin.isLogin, (req, res)=>{
 
 //väljalogimine
 app.get('/logout', (req, res)=>{
-	res.redirect('/');
+	// lõpetame sessiooni, et sessioonimuutujad (kasutaja id ja nimi) kustutataks
+	req.session.destroy((err)=>{
+		if(err){
+			console.log('Viga sessiooni lõpetamisel: ' + err);
+		}
+		res.redirect('/');
+	});
 });
 
 /* app.get('/eestifilm', (req,res)=>{
@@ -323,6 +336,10 @@ app.use('/galleryPhotoUpload', galleryPhotoUploadRouter);
 
 const galleryPhotosRouter = require('./routes/galleryPhotoRoutes')
 app.use('/galleryPhotos', galleryPhotosRouter);
+
+// sisseloginud kasutaja enda galeriipildid
+const galleryOwnPhotosRouter = require('./routes/galleryOwnPhotosRoutes')
+app.use('/galleryOwnPhotos', galleryOwnPhotosRouter);
 
 //kasutajakonto loomise marsruut
 const signupRouter = require('./routes/signupRoutes')
