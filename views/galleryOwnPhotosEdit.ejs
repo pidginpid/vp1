@@ -29,20 +29,23 @@
 		</dialog>
 		<ul id="gallery" class="gallery">
 		<img class="thumbs" data-id="<%=picture.id%>" src='/gallery/thumbs/<%= picture.filename %>' data-filename="<%= picture.filename %>" alt='<%= picture.alttext %>'><br><%= picture.alttext%><br>Privaatsus: <%= picture.privacyText %>
-		<form method="UPDATE">
-		<input id="privacyInput1" name="privacyInput" type="radio" value="1" checked>
+		<form method="POST">
+		<input id="privacyInput1" name="privacyInput" type="radio" value="1" <%= Number(picture.privacy) === 1 ? 'checked' : '' %>>
 		<label for="privacyInput1">Privaatne (ainult ise näen)</label>
 		<br>
-		<input id="privacyInput2" name="privacyInput" type="radio" value="2" checked>
+		<input id="privacyInput2" name="privacyInput" type="radio" value="2" <%= Number(picture.privacy) === 2 ? 'checked' : '' %>>
 		<label for="privacyInput2">Sisseloginud kasutajatele</label>
 		<br>
-		<input id="privacyInput3" name="privacyInput" type="radio" value="3" checked>
+		<input id="privacyInput3" name="privacyInput" type="radio" value="3" <%= Number(picture.privacy) === 3 ? 'checked' : '' %>>
 		<label for="privacyInput3">Avalik (kõik näevad)</label>
 		<br>
 		<label for "altInput">Foto alternatiivtekst (alt)</label>
-		<input id="altInput" name="altInput" type="text" placeholder="<%=picture.alttext%>">
+		<input id="altInput" name="altInput" type="text" value="<%= picture.alttext %>">
 		<br>
 		<input type="submit" id="userSubmit" name="userSubmit" value="Save changes">
+	</form>
+	<form method="POST">
+		<input type="submit" id="photoDelete" name="photoDelete" value="Kustuta foto">
 	</form>
 	</ul>
 </body>

@@ -19,12 +19,13 @@ const galleryPhotos = async (req, res) => {
 	const mysql = require('mysql2/promise');
 	let conn;
 	let galleryData = [];
+	let galleryLinks;
 	let page = parseInt(req.params.page);
 	let skip = 0;
 	const limit = 5;
 	const privacy = 2;
 	// kontrollime, et lk number poleksliiga väike või, et ta üldse on number
-	if(page < 1 || isNaN){
+	if(isNaN(page) || page < 1){
 		page = 1;
 	}
 	try {
@@ -46,22 +47,22 @@ const galleryPhotos = async (req, res) => {
 		skip = (page - 1) * limit;
 		
 		// teeme navigatsioonilingid
-		let galleryLinks
 		// tagasi
 		if(page === 1){
 			galleryLinks = 'Eelmine leht &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;';
 		} else {
-			galleryLinks = '<a href="/gallery/${page - 1}">Eelmine leht</a> &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;';
+			galleryLinks = `<a href="/galleryPhotos/${page - 1}">Eelmine leht</a> &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;`;
 		}
 		// edasi
 		if(page * limit >= photoCount){
 			galleryLinks += 'Järgmine leht';
 		} else {
-			galleryLinks += '<a href="/gallery/${page + 1}">Järgmine leht</a>';
+			galleryLinks += `<a href="/galleryPhotos/${page + 1}">Järgmine leht</a>`;
 		}
 		
-		sqlReq = 'SELECT id, filename, alttext FROM galleryphotos WHERE privacy >= ? AND deleted IS NULL';
-		const [sqlRes] = await conn.execute(sqlReq, [2, skip]);
+		// LIMIT ja OFFSET antakse tekstina, sest execute() ei võta numbrit LIMIT/OFFSET väärtuseks
+		sqlReq = 'SELECT id, filename, alttext FROM galleryphotos WHERE privacy >= ? AND deleted IS NULL LIMIT ? OFFSET ?';
+		const [sqlRes] = await conn.execute(sqlReq, [privacy, limit.toString(), skip.toString()]);
 		console.log(sqlRes);
 		sqlRes.forEach(function(photo){
 			if(!photo.alttext) {
@@ -72,7 +73,7 @@ const galleryPhotos = async (req, res) => {
 		res.render('galleryPhotos', {galleryData: galleryData, pictureList: sqlRes, links: galleryLinks});
 	} catch (err) {
 		console.log('Viga andmebaasist lugemisel: ' + err);
-		gallerylinks = 'Eelmine leht &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; Järgmine leht';
+		galleryLinks = 'Eelmine leht &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; Järgmine leht';
 		res.render('galleryPhotos', {galleryData: galleryData, pictureList: [], links: galleryLinks});
 	}
 	finally {

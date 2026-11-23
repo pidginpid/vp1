@@ -7,10 +7,13 @@ router.use(checkLogin.isLogin);
 //kontrollerid
 const {
 	galleryOwnPhotos,
-	galleryOwnPhotosHome } = require ('../controllers/galleryOwnPhotosControllers');
+	galleryOwnPhotosHome,
+	galleryOwnPhotosEditPost } = require ('../controllers/galleryOwnPhotosControllers');
 
 router.route('/').get(galleryOwnPhotos);
 
 router.route('/edit/:id').get(galleryOwnPhotosHome);
+
+router.route('/edit/:id').post(galleryOwnPhotosEditPost);
 
 module.exports = router;
